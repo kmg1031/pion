@@ -2,11 +2,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const conn = mysql.createConnection({
-	"host" : "localhost",
-	"port" : "8090",
-	"user" : "root",
-	"password" : "1111",
-	"database" : "mysite"
+
 });
 
 conn.connect();
