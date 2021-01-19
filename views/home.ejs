@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>hello world</title>
+</head>
+<link rel="stylesheet" type="text/css" href="/common.css">
+<body>
+
+	<header>
+		<div>
+			<h2>hello world</h2>
+		</div>
+		<div id="nav">
+			<a href="#msgTest">msgTest</a>
+			<a href="#loginModal">login</a>
+			<a href="#userCreate">userCreate</a>
+			<a href="#userList">userList</a>
+			<a href="#userAuthList">userAuthList</a>
+		</div>
+	</header>
+
+	<section>
+		
+		<div class="contentSection" id="msgTest">
+			<div>
+				<input type="text" id="pushMsg" >
+				<input type="submit" id="pushBtn" value="push">
+			</div>
+			<div>
+				<span>CallBack TEXT</span>
+				<p id="viewBox"></p>
+			</div>
+		</div>
+
+		<div class="contentSection" id="loginModal">
+			<div>
+				<span>login</span>
+			</div>
+			<div>
+				<span>ID : </span><input type="text" id="userId">
+			</div>
+			<div>
+				<span>PW : </span><input type="text" id="userPw">
+			</div>
+			<div>
+				<button id="loginBtn">login</button>
+			</div>
+		</div>
+		<div class="contentSection" id="userCreate">
+			<div>
+				<span>user create</span>
+			</div>
+			<div>
+				<span>ID : </span><input type="text" id="createUserId">
+			</div>
+			<div>
+				<span>PW : </span><input type="text" id="createUserPw">
+			</div>
+			<div>
+				<span>NAME : </span><input type="text" id="createUserName">
+			</div>
+			<div>
+				<button id="userCreateBtn">유저 추가</button>
+			</div>
+		</div>
+		<div class="contentSection" id="userList">
+			<div>
+				<span>user list</span>
+			</div>
+			<div>
+				<button id="userListBtn">유저 목록</button>
+			</div>
+			<div id="userListTable">
+			</div>
+		</div>
+		<div class="contentSection" id="userAuthList">
+			<div>
+				<span>user auth list</span>
+			</div>
+			<div>
+				<button id="userAuthListBtn">유저 권한 목록</button>
+			</div>
+			<div id="userAuthListTable">
+			</div>
+		</div>
+		<div class="contentSection" id="userOption">
+			<div>
+				<span>user auth list</span>
+			</div>
+			<div>
+				<input type="text" id="userOptionSearch_userId" value="master">
+				<button id="userOptionBtn">유저 옵션 확인</button>
+				<table id="userOptionTable">
+					<tr>
+						 <th>name</th>
+						 <th>t1</th>
+						 <th>t2</th>
+						 <th>t3</th>
+						 <th>t4</th>
+						 <th>t5</th>
+						 <th>t6</th>
+					</tr>
+					<tr>
+						<td id="userOptionTable_userId"></td>
+						<td><input type="checkbox" class="userOptionChk" id="userOptionTable_option1_t1" value="t1"></td>
+						<td><input type="checkbox" class="userOptionChk" id="userOptionTable_option1_t2" value="t2"></td>
+						<td><input type="checkbox" class="userOptionChk" id="userOptionTable_option1_t3" value="t3"></td>
+						<td><input type="checkbox" class="userOptionChk" id="userOptionTable_option1_t4" value="t4"></td>
+						<td><input type="checkbox" class="userOptionChk" id="userOptionTable_option1_t5" value="t5"></td>
+						<td><input type="checkbox" class="userOptionChk" id="userOptionTable_option1_t6" value="t6"></td>
+					</tr>
+				</table>
+			</div>
+			<div id="userOptionTable">
+			</div>
+		</div>	
+	</section>
+
+
+	<footer style="padding-top: 300px;"></footer>
+
+</body>
+</html>
+<script src="/common.js"></script>
+<script>
+	// getEId
+	// addEvent
+	// ajax
+
+	//유저 옵션 수정
+	function userOptionModify(e){
+		var userId = getEId("userOptionTable_userId");
+		console.log(this);
+
+		if(userId.innerText == '') return;
+
+		ajax({
+			url : "/user/option/user_option_modify",
+			data : {
+				userId : userId.innerText,
+				option : this.value,
+				value : this.checked ? 1 : 0,
+			},
+			success : function(result){
+				console.log(result);
+			}
+		})
+	}
+	addEvent(".userOptionChk","click",userOptionModify);
+
+	// 유저 옵션
+	function userOptionShow(){
+		var search_userId = getEId("userOptionSearch_userId");
+
+		ajax({
+			url : "/user/option/user_option",
+			data : {
+				userId : search_userId.value,
+			},
+			success : function(result){
+				result = JSON.parse(result);
+
+				if(!result.userId){
+					alert("유저 정보를 찾을 수 없습니다.")
+					return;
+				}
+				
+				var userId = getEId("userOptionTable_userId");
+				userId.innerText = result.userId;
+
+				var optionArr = result.optionArr;
+				for(var key in optionArr){
+					getEId("userOptionTable_option1_"+key).checked = optionArr[key];
+				}
+			}
+		})
+	}
+	addEvent("#userOptionBtn","click",userOptionShow);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+	// 갑자기 귀찮아짐... 옵션이나 이거나 그게그거니깐 옵션 다하고 나중에 할래
+	// 유저 권한 목록
+	userAuthListShow();
+	function userAuthListShow(){
+		ajax({
+			url : "user/auth/list",
+			data : {},
+			success : function(result){
+				result = JSON.parse(result);
+				console.log(result);
+				var userTable = '<table style="width : 400px"><tr><td></td><td>userId</td><td>userName</td><td>auth</td></tr>';
+				for(var i=0,len = result.length;i<len;i++){
+					
+					userTable += `<tr><td>${result[i].seq}</td><td>${result[i].userId}</td><td>${result[i].userName}</td><td>`;
+					if(result[i].admin != null && result[i].admin != undefined){
+						userTable += result[i].admin;
+					}else{
+						userTable += '<button id="userAuthList">유저 권한 추가</button>';
+					}
+					userTable += "</td></tr>";
+				}
+				userTable += "</table>";
+				document.getElementById("userAuthListTable").innerHTML = userTable;
+			}
+		})
+	}
+	addEvent("#userAuthList","click",userAuthListShow);
+
+	// 유저 목록
+	userListShow();
+	function userListShow(){
+		ajax({
+			url : "user/list",
+			data : {},
+			success : function(result){
+				result = JSON.parse(result);
+				console.log(result);
+				var userTable = '<table style="width : 400px"><tr><td>userID</td><td>userName</td></tr>';
+				for(var i=0,len = result.length;i<len;i++){
+					userTable +=`<tr><td>${result[i].userId}</td><td>${result[i].userName}</td></tr>`;
+				}
+				userTable += "</table>";
+				document.getElementById("userListTable").innerHTML = userTable;
+			}
+		})
+	}
+	addEvent("#userListBtn","click",userListShow);
+
+</script>
